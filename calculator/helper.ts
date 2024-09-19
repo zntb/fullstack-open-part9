@@ -12,9 +12,7 @@ export class ArgumentError extends Error {
 export const validatePositiveNumber = (value: any, name: string): number => {
   const num = Number(value);
   if (isNaN(num) || num <= 0) {
-    throw new ArgumentError(
-      `Invalid ${name}. Please provide a positive number.`,
-    );
+    throw new Error(`Invalid ${name}. Please provide a positive number.`);
   }
   return num;
 };

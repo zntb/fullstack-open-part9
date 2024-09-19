@@ -1,39 +1,11 @@
-import { validatePositiveNumber, handleError } from './helper';
+import { validatePositiveNumber } from './helper';
 
 interface BmiResult {
   bmi: number;
   category: string;
 }
 
-function parseArguments(args: Array<string>): {
-  heightCm: number;
-  weightKg: number;
-} {
-  if (args.length !== 4) {
-    throw new Error(
-      'Invalid number of arguments. Please provide height (cm) and weight (kg).',
-    );
-  }
-
-  const heightCm = validatePositiveNumber(args[2], 'height');
-  const weightKg = validatePositiveNumber(args[3], 'weight');
-
-  if (isNaN(heightCm) || heightCm <= 0) {
-    throw new Error(
-      'Invalid height. Please provide a positive number for height in cm.',
-    );
-  }
-
-  if (isNaN(weightKg) || weightKg <= 0) {
-    throw new Error(
-      'Invalid weight. Please provide a positive number for weight in kg.',
-    );
-  }
-
-  return { heightCm, weightKg };
-}
-
-function calculateBmi(heightCm: number, weightKg: number): BmiResult {
+export function calculateBmi(heightCm: number, weightKg: number): BmiResult {
   const heightM = heightCm / 100;
   const bmi = weightKg / (heightM * heightM);
   let category: string;
@@ -70,12 +42,15 @@ function calculateBmi(heightCm: number, weightKg: number): BmiResult {
   return { bmi: parseFloat(bmi.toFixed(1)), category };
 }
 
-try {
-  const { heightCm, weightKg } = parseArguments(process.argv);
-  const result = calculateBmi(heightCm, weightKg);
-  console.log(
-    `Your BMI is ${result.bmi}, which falls under: ${result.category}`,
-  );
-} catch (error) {
-  handleError(error);
+if (require.main === module) {
+  try {
+    const heightCm = validatePositiveNumber(process.argv[2], 'height');
+    const weightKg = validatePositiveNumber(process.argv[3], 'weight');
+    const result = calculateBmi(heightCm, weightKg);
+    console.log(
+      `Your BMI is ${result.bmi}, which falls under: ${result.category}`,
+    );
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }

@@ -2,4 +2,4 @@
 
 All exercises are saved in a separate commit.
 
-- [Exercises 9.1-9.4](./calculator/)
+- [Exercises 9.1-9.5](./calculator/)
