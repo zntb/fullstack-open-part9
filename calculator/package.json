@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "ts-node": "ts-node",
     "calculateBMI": "ts-node bmiCalculator.ts",
     "calculateExercises": "ts-node exerciseCalculator.ts"
   },

@@ -1,3 +1,5 @@
+import { validatePositiveNumber, handleError } from './helper';
+
 interface BmiResult {
   bmi: number;
   category: string;
@@ -13,8 +15,8 @@ function parseArguments(args: Array<string>): {
     );
   }
 
-  const heightCm = Number(args[2]);
-  const weightKg = Number(args[3]);
+  const heightCm = validatePositiveNumber(args[2], 'height');
+  const weightKg = validatePositiveNumber(args[3], 'weight');
 
   if (isNaN(heightCm) || heightCm <= 0) {
     throw new Error(
@@ -75,5 +77,5 @@ try {
     `Your BMI is ${result.bmi}, which falls under: ${result.category}`,
   );
 } catch (error) {
-  console.error(error.message);
+  handleError(error);
 }

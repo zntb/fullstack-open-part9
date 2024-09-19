@@ -1,3 +1,9 @@
+import {
+  validatePositiveNumber,
+  validateNonNegativeNumber,
+  handleError,
+} from './helper';
+
 interface ExerciseResult {
   periodLength: number;
   trainingDays: number;
@@ -14,29 +20,19 @@ interface ExerciseInput {
 }
 
 const parseArgumentsForExercises = (args: string[]): ExerciseInput => {
-  if (args.length !== 10) {
+  if (args.length < 4) {
     throw new Error(
-      'Invalid number of arguments. Expected exactly 8 daily hours and 1 target.',
+      'Invalid number of arguments. Provide target followed by any number of daily exercise hours.',
     );
   }
 
-  const dailyHours = args.slice(2, 9).map(arg => {
-    const value = Number(arg);
-    if (isNaN(value)) {
-      throw new Error('All daily hours should be numbers.');
-    }
-    return value;
+  const target = validatePositiveNumber(args[2], 'target');
+
+  const dailyHours = args.slice(3).map((arg, index) => {
+    return validateNonNegativeNumber(arg, `daily hour ${index + 1}`);
   });
 
-  const target = Number(args[9]);
-  if (isNaN(target)) {
-    throw new Error('Target value should be a number.');
-  }
-
-  return {
-    dailyHours,
-    target,
-  };
+  return { dailyHours, target };
 };
 
 const roundAverage = (average: number): number => {
@@ -85,5 +81,5 @@ try {
   const { dailyHours, target } = parseArgumentsForExercises(process.argv);
   console.log(calculateExercises(dailyHours, target));
 } catch (error) {
-  console.error('Error:', (error as Error).message);
+  handleError(error);
 }
