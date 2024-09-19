@@ -1,4 +1,4 @@
-export const isNotNumber = (argument: any): boolean => {
+export const isNotNumber = (argument: unknown): boolean => {
   return isNaN(Number(argument));
 };
 
@@ -9,7 +9,10 @@ export class ArgumentError extends Error {
   }
 }
 
-export const validatePositiveNumber = (value: any, name: string): number => {
+export const validatePositiveNumber = (
+  value: unknown,
+  name: string,
+): number => {
   const num = Number(value);
   if (isNaN(num) || num <= 0) {
     throw new Error(`Invalid ${name}. Please provide a positive number.`);
@@ -17,7 +20,10 @@ export const validatePositiveNumber = (value: any, name: string): number => {
   return num;
 };
 
-export const validateNonNegativeNumber = (value: any, name: string): number => {
+export const validateNonNegativeNumber = (
+  value: unknown,
+  name: string,
+): number => {
   const num = Number(value);
   if (isNaN(num) || num < 0) {
     throw new ArgumentError(

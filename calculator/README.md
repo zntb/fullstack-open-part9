@@ -183,3 +183,9 @@ If the query parameters of the request are of the wrong type or missing, a respo
 Do not copy the calculator code to file `index.ts`; instead, make it a [TypeScript module](https://www.typescriptlang.org/docs/handbook/modules/introduction.html) that can be imported into `index.ts`.
 
 For `calculateBmi` to work correctly from both the command line and the endpoint, consider adding a check `require.main === module` to the file _bmiCalculator.ts_. It tests whether the module is main, i.e. it is run directly from the command line (in our case, `npm run calculateBmi`), or it is used by other modules that import functions from it (e.g. _index.ts_). Parsing command-line arguments makes sense only if the module is main. Without this condition, you might see argument validation errors when starting the application via `npm start` or `npm run dev`.
+
+## Exercises 9.6-9.7
+
+### 9.6 Eslint
+
+Configure your project to use the above ESlint settings and fix all the warnings.

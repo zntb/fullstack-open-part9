@@ -50,7 +50,11 @@ if (require.main === module) {
     console.log(
       `Your BMI is ${result.bmi}, which falls under: ${result.category}`,
     );
-  } catch (error) {
-    console.error('Error:', error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error:', error.message);
+    } else {
+      console.error('An unknown error occurred.');
+    }
   }
 }
