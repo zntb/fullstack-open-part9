@@ -40,7 +40,7 @@ const roundAverage = (average: number): number => {
   return fraction > 0.75 ? Math.ceil(average) : average;
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyHours: number[],
   target: number,
 ): ExerciseResult => {
