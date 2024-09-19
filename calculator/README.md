@@ -125,3 +125,33 @@ Another note: somehow surprisingly TypeScript does not allow to define the same 
 ![Exercises 9.3](../assets/60new.png)
 
 This is actually not quite true. This rule applies only to files that are treated as "scripts". A file is a script if it does not contain any export or import statements. If a file has those, then the file is treated as a [module](https://www.typescriptlang.org/docs/handbook/modules/introduction.html), and the variables do not get defined in the block scope.
+
+## Exercises 9.4-9.5
+
+### 9.4 Express
+
+Add Express to your dependencies and create an HTTP GET endpoint `hello` that answers 'Hello Full Stack!'
+
+The web app should be started with the commands `npm start` in production mode and npm run dev in development mode. The latter should also use `ts-node-dev` to run the app.
+
+Replace also your existing `tsconfig.json` file with the following content:
+
+```json
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strictBindCallApply": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "declaration": true
+  }
+}
+```
+
+Make sure there aren't any errors!
