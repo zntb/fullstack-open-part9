@@ -21,3 +21,15 @@ When run in command line you get the "real result" for sure. So, never trust the
 Initialize a new backend project that will work with the frontend. Configure ESlint and tsconfig with the same configurations as proposed in the material. Define an endpoint that answers HTTP GET requests for route `/api/ping`.
 
 The project should be runnable with npm scripts, both in development mode and, as compiled code, in production mode.
+
+## 9.9: Patientor backend, step2
+
+Fork and clone the project [patientor](https://github.com/fullstack-hy2020/patientor). Start the project with the help of the README file.
+
+You should be able to use the frontend without a functioning backend.
+
+Ensure that the backend answers the ping request that the frontend has made on startup. Check the developer tools to make sure it works:
+
+![Exercises 9.9](../assets/16a.png)
+
+You might also want to have a look at the console tab. If something fails, [part 3](https://fullstackopen.com/en/part3) of the course shows how the problem can be solved.
