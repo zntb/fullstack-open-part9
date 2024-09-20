@@ -3,3 +3,4 @@
 All exercises are saved in a separate commit.
 
 - [Exercises 9.1-9.7](./calculator/)
+- [Exercises 9.8](./patientor/)
