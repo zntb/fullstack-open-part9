@@ -76,3 +76,7 @@ const id = uuid();
 Set up safe parsing, validation and type predicate to the POST /api/patients request.
 
 Refactor the gender field to use an [enum type](http://www.typescriptlang.org/docs/handbook/enums.html).
+
+### 9.14: Patientor backend, step7
+
+Use Zod to validate the requests to the POST endpoint `/api/patients`.
