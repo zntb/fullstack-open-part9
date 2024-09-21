@@ -59,3 +59,14 @@ Try the endpoint with your browser and ensure that `ssn` is not included in the 
 After creating the endpoint, ensure that the frontend shows the list of patients:
 
 ![Exercises 9.11](../assets/22h.png)
+
+## Exercises 9.12-9.13
+
+### 9.12: Patientor backend, step5
+
+Create a POST endpoint `/api/patients` for adding patients. Ensure that you can add patients also from the frontend. You can create unique ids of type `string` using the [uuid](https://github.com/uuidjs/uuid) library:
+
+```ts
+import { v1 as uuid } from 'uuid';
+const id = uuid();
+```
