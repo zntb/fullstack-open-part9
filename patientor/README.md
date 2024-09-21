@@ -70,3 +70,9 @@ Create a POST endpoint `/api/patients` for adding patients. Ensure that you can 
 import { v1 as uuid } from 'uuid';
 const id = uuid();
 ```
+
+### 9.13: Patientor backend, step6
+
+Set up safe parsing, validation and type predicate to the POST /api/patients request.
+
+Refactor the gender field to use an [enum type](http://www.typescriptlang.org/docs/handbook/enums.html).

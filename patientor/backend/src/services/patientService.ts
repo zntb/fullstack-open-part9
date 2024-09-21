@@ -12,11 +12,12 @@ const getNonSensitivePatients = (): Omit<Patient, 'ssn'>[] => {
   }));
 };
 
-const addPatient = (patientData: PatientFormValues): Patient => {
+const addPatient = (patient: PatientFormValues): Patient => {
   const newPatient = {
     id: uuid(),
-    ...patientData,
+    ...patient,
   };
+
   patients.push(newPatient);
   return newPatient;
 };
