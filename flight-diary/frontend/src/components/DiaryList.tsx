@@ -1,13 +1,14 @@
-import { DiaryEntry } from '../types';
+import { NonSensitiveDiaryEntry } from '../types';
 
 interface DiaryListProps {
-  diaries: DiaryEntry[];
+  diaries: NonSensitiveDiaryEntry[];
 }
 
 const DiaryList = ({ diaries }: DiaryListProps) => {
   if (!Array.isArray(diaries) || diaries.length === 0) {
     return <p>No diary entries found.</p>;
   }
+
   return (
     <>
       <h1>Diary Entries</h1>
