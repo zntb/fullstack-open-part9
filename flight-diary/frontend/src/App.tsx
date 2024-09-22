@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getDiaries, addDiary } from './services/diaryService';
-import { DiaryEntry } from './types';
+import { NonSensitiveDiaryEntry, NewDiaryEntry } from './types';
 import DiaryList from './components/DiaryList';
 import DiaryForm from './components/DiaryForm';
 
 const App = () => {
-  const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+  const [diaries, setDiaries] = useState<NonSensitiveDiaryEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const App = () => {
     fetchDiaries();
   }, []);
 
-  const handleNewDiary = async (newDiary: Omit<DiaryEntry, 'id'>) => {
+  const handleNewDiary = async (newDiary: NewDiaryEntry) => {
     try {
       const addedDiary = await addDiary(newDiary);
       setDiaries(diaries.concat(addedDiary));

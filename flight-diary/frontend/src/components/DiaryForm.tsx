@@ -1,43 +1,29 @@
 import { useState } from 'react';
-import { NewDiaryEntry, Weather, Visibility } from '../types';
+import { DiaryEntry, Weather, Visibility } from '../types';
 import { addDiary } from '../services/diaryService';
 import axios, { AxiosError } from 'axios';
 
 interface DiaryFormProps {
-  onAddDiary: (newDiary: NewDiaryEntry) => void;
+  onAddDiary: (newDiary: Omit<DiaryEntry, 'id'>) => void;
 }
 
 const DiaryForm = ({ onAddDiary }: DiaryFormProps) => {
   const [date, setDate] = useState('');
-  const [visibility, setVisibility] = useState<string>('');
-  const [weather, setWeather] = useState<string>('');
+  const [visibility, setVisibility] = useState<Visibility>(Visibility.Great);
+  const [weather, setWeather] = useState<Weather>(Weather.Sunny);
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
-
-  const isValidDate = (dateString: string): boolean => {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!regex.test(dateString)) return false;
-
-    const dateParts = dateString.split('-').map(Number);
-    const jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-    return !isNaN(jsDate.getTime()) && jsDate.getFullYear() === dateParts[0];
-  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!isValidDate(date)) {
-      setError('Invalid date format. Please use YYYY-MM-DD.');
+    if (!date) {
+      setError('Please select a date.');
       return;
     }
 
-    if (!Object.values(Visibility).includes(visibility as Visibility)) {
-      setError(`Incorrect visibility: ${visibility}`);
-      return;
-    }
-
-    if (!Object.values(Weather).includes(weather as Weather)) {
-      setError(`Incorrect weather: ${weather}`);
+    if (!visibility || !weather) {
+      setError('Please select both visibility and weather.');
       return;
     }
 
@@ -55,8 +41,8 @@ const DiaryForm = ({ onAddDiary }: DiaryFormProps) => {
       });
       onAddDiary(newDiary);
       setDate('');
-      setVisibility('');
-      setWeather('');
+      setVisibility(Visibility.Great);
+      setWeather(Weather.Sunny);
       setComment('');
       setError(null);
     } catch (e: unknown) {
@@ -76,38 +62,45 @@ const DiaryForm = ({ onAddDiary }: DiaryFormProps) => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div>
-          date
+          Date
           <input
-            type='text'
+            type='date'
             value={date}
-            onChange={e => {
-              setDate(e.target.value);
-              if (!isValidDate(e.target.value)) {
-                setError('Invalid date format. Please use YYYY-MM-DD.');
-              } else {
-                setError(null);
-              }
-            }}
+            onChange={e => setDate(e.target.value)}
           />
         </div>
         <div>
-          visibility
-          <input
-            type='text'
-            value={visibility}
-            onChange={e => setVisibility(e.target.value)}
-          />
+          Visibility
+          {Object.values(Visibility).map(value => (
+            <span key={value}>
+              <input
+                type='radio'
+                name='visibility'
+                value={value}
+                checked={visibility === value}
+                onChange={() => setVisibility(value)}
+              />
+              <label>{value}</label>
+            </span>
+          ))}
         </div>
         <div>
-          weather
-          <input
-            type='text'
-            value={weather}
-            onChange={e => setWeather(e.target.value)}
-          />
+          Weather
+          {Object.values(Weather).map(value => (
+            <span key={value}>
+              <input
+                type='radio'
+                name='weather'
+                value={value}
+                checked={weather === value}
+                onChange={() => setWeather(value)}
+              />
+              <label>{value}</label>
+            </span>
+          ))}
         </div>
         <div>
-          comment
+          Comment
           <input
             type='text'
             value={comment}

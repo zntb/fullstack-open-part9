@@ -23,3 +23,15 @@ See eg. [this](https://dev.to/mdmostafizurrahaman/handle-axios-error-in-typescri
 Your solution may look like this:
 
 ![Exercise 9.19](../assets/71new.png)
+
+## Exercise 9.20
+
+Addition of a diary entry is now very error prone since user can type anything to the input fields. The situation must be improved.
+
+Modify the input form so that the date is set with a HTML [date](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date) input element, and the weather and visibility are set with HTML [radio buttons](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio). We have already used radio buttons in [part 6](https://fullstackopen.com/en/part6/many_reducers#store-with-complex-state), that material may or may not be useful...
+
+Your app should all the time stay well typed and there should not be any Eslint errors and no Eslint rules should be ignored.
+
+Your solution could look like this:
+
+![Exercise 9.20](../assets/72new.png)
