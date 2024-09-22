@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getDiaries } from './services/diaryService';
+import { getDiaries, addDiary } from './services/diaryService';
 import { DiaryEntry } from './types';
 import DiaryList from './components/DiaryList';
+import DiaryForm from './components/DiaryForm';
 
 const App = () => {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
@@ -14,16 +15,26 @@ const App = () => {
         setDiaries(fetchedDiaries);
       } catch (err) {
         setError('Could not fetch diary entries');
-        console.error(err);
+        console.error('Failed to fetch diary entries:', err);
       }
     };
 
     fetchDiaries();
   }, []);
 
+  const handleNewDiary = async (newDiary: Omit<DiaryEntry, 'id'>) => {
+    try {
+      const addedDiary = await addDiary(newDiary);
+      setDiaries(diaries.concat(addedDiary));
+    } catch (error) {
+      console.error('Failed to add diary entry:', error);
+      setError('Failed to add new diary entry.');
+    }
+  };
+
   return (
     <div>
-      <h1>Diary Entries</h1>
+      <DiaryForm onAddDiary={handleNewDiary} />
       {error ? <p>{error}</p> : <DiaryList diaries={diaries} />}
     </div>
   );

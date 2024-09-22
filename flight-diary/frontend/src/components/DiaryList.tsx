@@ -9,15 +9,18 @@ const DiaryList = ({ diaries }: DiaryListProps) => {
     return <p>No diary entries found.</p>;
   }
   return (
-    <ul style={{ listStyle: 'none' }}>
-      {diaries.map(diary => (
-        <li key={diary.id}>
-          <strong>{diary.date}</strong> <br />
-          Weather: {diary.weather} <br />
-          Visibility: {diary.visibility} <br /> <br />
-        </li>
-      ))}
-    </ul>
+    <>
+      <h1>Diary Entries</h1>
+      <ul style={{ listStyle: 'none' }}>
+        {diaries.map(diary => (
+          <li key={diary.id}>
+            <strong>{diary.date}</strong> <br />
+            Weather: {diary.weather} <br />
+            Visibility: {diary.visibility} <br /> <br />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 

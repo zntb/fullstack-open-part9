@@ -9,3 +9,7 @@ Create a TypeScript React app with similar configurations as the apps of this se
 Remember to keep the network tab open. It might give you a valuable hint...
 
 You can decide how the diary entries are rendered. If you wish, you may take inspiration from the figure below. Note that the backend API does not return the diary comments, you may modify it to return also those on a GET request.
+
+## Exercise 9.18
+
+Make it possible to add new diary entries from the frontend. In this exercise you may skip all validations and assume that the user just enters the data in a correct form.
