@@ -5,17 +5,19 @@ import {
   Typography,
   CircularProgress,
   List,
-  ListItem,
+  Button,
+  Box,
 } from '@mui/material';
 import { Male, Female, Transgender } from '@mui/icons-material';
 import axios from 'axios';
-import { Patient, Diagnosis, Entry } from '../types';
+import { Patient, Diagnosis } from '../types';
 import { apiBaseUrl } from '../constants';
+import EntryDetails from './EntryDetails';
 
 const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
+  const [, setDiagnoses] = useState<Diagnosis[] | null>(null);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -61,63 +63,38 @@ const PatientDetails = () => {
     }
   };
 
-  const renderDiagnosisName = (code: string) => {
-    const diagnosis = diagnoses?.find(d => d.code === code);
-    return diagnosis ? diagnosis.name : code;
-  };
-
   return (
     <Container>
-      <Typography variant='h4' marginTop={2}>
-        {patient.name}
-        <span> {genderIcon()}</span>
+      <Box display='flex' alignItems='center' marginTop={2}>
+        <Typography variant='h4' marginRight={1}>
+          {patient.name}
+        </Typography>
+        {genderIcon()}
+      </Box>
+      <Typography variant='body1' marginBottom={2}>
+        ssh: {patient.ssn}
       </Typography>
-      <Typography variant='h6'>Date of Birth: {patient.dateOfBirth}</Typography>
-      <Typography variant='h6'>Occupation: {patient.occupation}</Typography>
-      <Typography variant='h6'>SSN: {patient.ssn}</Typography>
+      <Typography variant='body1' marginBottom={2}>
+        occupation: {patient.occupation}
+      </Typography>
 
-      <Typography variant='h5' marginTop={2}>
-        Entries:
+      <Typography variant='h5' marginTop={2} marginBottom={2}>
+        entries
       </Typography>
 
       {patient.entries.length > 0 ? (
         <List>
-          {patient.entries.map((entry: Entry) => (
-            <ListItem key={entry.id} alignItems='flex-start'>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: 8,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  <Typography variant='body1'>Date: {entry.date}</Typography>
-                  <Typography variant='body1'>{entry.description}</Typography>
-                </div>
-
-                <Typography variant='body2'>Diagnose Codes:</Typography>
-                {entry.diagnosisCodes ? (
-                  <ul>
-                    {entry.diagnosisCodes.map(code => (
-                      <li key={code}>
-                        {code} - {renderDiagnosisName(code)}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <Typography variant='body2'>
-                    No diagnosis codes available.
-                  </Typography>
-                )}
-              </div>
-            </ListItem>
+          {patient.entries.map(entry => (
+            <EntryDetails key={entry.id} entry={entry} />
           ))}
         </List>
       ) : (
         <Typography>No entries available.</Typography>
       )}
+
+      <Button variant='contained' color='primary' style={{ marginTop: '16px' }}>
+        ADD NEW ENTRY
+      </Button>
     </Container>
   );
 };
