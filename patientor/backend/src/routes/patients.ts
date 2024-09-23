@@ -32,6 +32,21 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   }
 };
 
+router.get(
+  '/:id',
+  (
+    req: Request<{ id: string }>,
+    res: Response<Patient | { error: string }>,
+  ) => {
+    const patient = patientService.getPatientById(req.params.id);
+    if (patient) {
+      res.json(patient);
+    } else {
+      res.status(404).json({ error: 'Patient not found' });
+    }
+  },
+);
+
 router.post(
   '/',
   newPatientParser,
