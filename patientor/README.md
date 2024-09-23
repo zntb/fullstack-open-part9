@@ -130,3 +130,15 @@ The result could look like this:
 ![Exercises 9.22](../assets/39x.png)
 
 The example uses [Material UI Icons](https://mui.com/material-ui/material-icons/) to represent genders.
+
+## Exercises 9.23-9.30
+
+Now we are ready to put the finishing touches to the app!
+
+### 9.23: Patientor, step 3
+
+Define the types `OccupationalHealthcareEntry` and `HospitalEntry` so that those conform with the new example data. Ensure that your backend returns the entries properly when you go to an individual patient's route:
+
+![Exercises 9.23](../assets/40.png)
+
+Use types properly in the backend! For now, there is no need to do a proper validation for all the fields of the entries in the backend, it is enough e.g. to check that the field `type` has a correct value.
