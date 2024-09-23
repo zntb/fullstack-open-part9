@@ -15,7 +15,7 @@ import { apiBaseUrl } from '../constants';
 const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [, setDiagnoses] = useState<Diagnosis[] | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -61,6 +61,11 @@ const PatientDetails = () => {
     }
   };
 
+  const renderDiagnosisName = (code: string) => {
+    const diagnosis = diagnoses?.find(d => d.code === code);
+    return diagnosis ? diagnosis.name : code;
+  };
+
   return (
     <Container>
       <Typography variant='h4' marginTop={2}>
@@ -96,7 +101,9 @@ const PatientDetails = () => {
                 {entry.diagnosisCodes ? (
                   <ul>
                     {entry.diagnosisCodes.map(code => (
-                      <li key={code}>{code}</li>
+                      <li key={code}>
+                        {code} - {renderDiagnosisName(code)}
+                      </li>
                     ))}
                   </ul>
                 ) : (

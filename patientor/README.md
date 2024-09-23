@@ -152,3 +152,9 @@ You can use the same type definition for an `Entry` in the frontend. For these e
 Your solution could look like this:
 
 ![Exercises 9.24](../assets/41.png)
+
+### 9.25: Patientor, step 5
+
+Fetch and add diagnoses to the application state from the /api/diagnoses endpoint. Use the new diagnosis data to show the descriptions for patient's diagnosis codes:
+
+![Exercises 9.25](../assets/42.png)
