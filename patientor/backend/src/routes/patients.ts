@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import express, { Request, Response, NextFunction } from 'express';
 import patientService from '../services/patientService';
-import { NewPatientSchema } from '../utils';
+import { NewPatientSchema, parseEntry } from '../utils';
 import { Patient, NonSensitivePatientData, PatientFormValues } from '../types';
 
 const router = express.Router();
@@ -56,6 +56,28 @@ router.post(
   ) => {
     const patient = patientService.addPatient(req.body);
     res.json(patient);
+  },
+);
+
+router.post(
+  '/:id/entries',
+  (
+    req: Request<{ id: string }, unknown, unknown>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const entry = parseEntry(req.body);
+      const newEntry = patientService.addEntry(req.params.id, entry);
+
+      if (newEntry) {
+        res.json(newEntry);
+      } else {
+        res.status(404).send({ error: 'Patient not found' });
+      }
+    } catch (error: unknown) {
+      next(error);
+    }
   },
 );
 

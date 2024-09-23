@@ -6,8 +6,14 @@ import {
   PatientFormValues,
 } from './types';
 
+const parseDiagnosisCodes = (object: unknown): Array<string> => {
+  if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
+    return [];
+  }
+  return object.diagnosisCodes as Array<string>;
+};
+
 const BaseEntrySchema = z.object({
-  id: z.string(),
   description: z.string(),
   date: z.string(),
   specialist: z.string(),
@@ -40,7 +46,7 @@ const HospitalEntrySchema = BaseEntrySchema.extend({
     .optional(),
 });
 
-const EntrySchema = z.union([
+const EntryWithoutIdSchema = z.union([
   HealthCheckEntrySchema,
   OccupationalHealthcareEntrySchema,
   HospitalEntrySchema,
@@ -52,9 +58,19 @@ export const NewPatientSchema = z.object({
   ssn: z.string(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),
-  entries: z.array(EntrySchema),
+  entries: z.array(EntryWithoutIdSchema),
 });
+
+export type EntryWithoutId = z.infer<typeof EntryWithoutIdSchema>;
 
 export const toNewPatient = (values: PatientFormValues): PatientFormValues => {
   return NewPatientSchema.parse(values);
+};
+
+export const parseEntry = (object: unknown): EntryWithoutId => {
+  const parsedEntry = EntryWithoutIdSchema.parse(object);
+  return {
+    ...parsedEntry,
+    diagnosisCodes: parseDiagnosisCodes(object),
+  };
 };
