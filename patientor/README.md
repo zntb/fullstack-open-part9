@@ -112,3 +112,21 @@ export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
 The response should look as follows:
 
 ![Exercises 9.21](../assets/38a.png)
+
+### 9.22: Patientor, step2
+
+Create a page for showing a patient's full information in the frontend.
+
+The user should be able to access a patient's information by clicking the patient's name.
+
+Fetch the data from the endpoint created in the previous exercise.
+
+You may use [MaterialUI](https://mui.com/material-ui/) for the new components but that is up to you since our main focus now is TypeScript.
+
+You might want to have a look at [part 7](https://fullstackopen.com/en/part7/react_router) if you don't yet have a grasp on how the [React Router](https://reactrouter.com/en/main/start/tutorial) works.
+
+The result could look like this:
+
+![Exercises 9.22](../assets/39x.png)
+
+The example uses [Material UI Icons](https://mui.com/material-ui/material-icons/) to represent genders.
