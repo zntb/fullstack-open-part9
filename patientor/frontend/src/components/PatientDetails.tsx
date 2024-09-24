@@ -7,10 +7,13 @@ import {
   List,
   Button,
   Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import { Male, Female, Transgender } from '@mui/icons-material';
 import axios from 'axios';
-import { Patient, Diagnosis, Entry } from '../types';
+import { Patient, Entry } from '../types';
 import { apiBaseUrl } from '../constants';
 import EntryDetails from './EntryDetails';
 import AddEntryForm from './AddEntryForm';
@@ -18,8 +21,7 @@ import AddEntryForm from './AddEntryForm';
 const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const [, setDiagnoses] = useState<Diagnosis[] | null>(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -32,21 +34,18 @@ const PatientDetails = () => {
         console.error(error);
       }
     };
-
-    const fetchDiagnoses = async () => {
-      try {
-        const { data: diagnosesData } = await axios.get<Diagnosis[]>(
-          `${apiBaseUrl}/diagnoses`,
-        );
-        setDiagnoses(diagnosesData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     void fetchPatient();
-    void fetchDiagnoses();
   }, [id]);
+
+  const handleEntryAdded = (newEntry: Entry) => {
+    if (patient) {
+      setPatient({
+        ...patient,
+        entries: patient.entries.concat(newEntry),
+      });
+      setDialogOpen(false);
+    }
+  };
 
   if (!patient) {
     return <CircularProgress />;
@@ -63,14 +62,6 @@ const PatientDetails = () => {
       default:
         return null;
     }
-  };
-
-  const handleAddEntry = (newEntry: Entry) => {
-    setPatient(prevPatient =>
-      prevPatient
-        ? { ...prevPatient, entries: [...prevPatient.entries, newEntry] }
-        : null,
-    );
   };
 
   return (
@@ -106,14 +97,17 @@ const PatientDetails = () => {
         variant='contained'
         color='primary'
         style={{ marginTop: '16px' }}
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => setDialogOpen(true)}
       >
-        {showForm ? 'Cancel' : 'Add New Entry'}
+        ADD NEW ENTRY
       </Button>
 
-      {showForm && (
-        <AddEntryForm patientId={id as string} onAddEntry={handleAddEntry} />
-      )}
+      <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Add a New Entry</DialogTitle>
+        <DialogContent>
+          <AddEntryForm patientId={id!} onEntryAdded={handleEntryAdded} />
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 };
