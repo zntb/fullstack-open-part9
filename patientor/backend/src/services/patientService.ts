@@ -43,7 +43,10 @@ const addEntry = (
   }
 
   const newEntry: Entry = { ...entryWithoutId, id: uuid() };
-  patient.entries.push(newEntry);
+  if (patient.entries) {
+    patient.entries.push(newEntry);
+  }
+
   return newEntry;
 };
 

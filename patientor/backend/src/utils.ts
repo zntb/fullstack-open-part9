@@ -30,8 +30,12 @@ const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   employerName: z.string(),
   sickLeave: z
     .object({
-      startDate: z.string(),
-      endDate: z.string(),
+      startDate: z.string().refine(value => /^\d{4}-\d{2}-\d{2}$/.test(value), {
+        message: 'Invalid date format. Expected YYYY-MM-DD',
+      }),
+      endDate: z.string().refine(value => /^\d{4}-\d{2}-\d{2}$/.test(value), {
+        message: 'Invalid date format. Expected YYYY-MM-DD',
+      }),
     })
     .optional(),
 });
@@ -58,7 +62,7 @@ export const NewPatientSchema = z.object({
   ssn: z.string(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),
-  entries: z.array(EntryWithoutIdSchema),
+  entries: z.array(z.any()).optional(),
 });
 
 export type EntryWithoutId = z.infer<typeof EntryWithoutIdSchema>;
@@ -68,9 +72,20 @@ export const toNewPatient = (values: PatientFormValues): PatientFormValues => {
 };
 
 export const parseEntry = (object: unknown): EntryWithoutId => {
-  const parsedEntry = EntryWithoutIdSchema.parse(object);
-  return {
-    ...parsedEntry,
-    diagnosisCodes: parseDiagnosisCodes(object),
-  };
+  try {
+    const parsedEntry = EntryWithoutIdSchema.parse(object);
+    if (
+      parsedEntry.type === EntryType.OccupationalHealthcare &&
+      typeof parsedEntry.employerName !== 'string'
+    ) {
+      throw new Error('employerName must be a string');
+    }
+    return {
+      ...parsedEntry,
+      diagnosisCodes: parseDiagnosisCodes(object),
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error('Invalid input data');
+  }
 };

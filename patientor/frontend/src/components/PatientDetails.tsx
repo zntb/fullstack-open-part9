@@ -38,7 +38,7 @@ const PatientDetails = () => {
   }, [id]);
 
   const handleEntryAdded = (newEntry: Entry) => {
-    if (patient) {
+    if (patient && patient.entries) {
       setPatient({
         ...patient,
         entries: patient.entries.concat(newEntry),
@@ -83,7 +83,7 @@ const PatientDetails = () => {
         entries
       </Typography>
 
-      {patient.entries.length > 0 ? (
+      {patient.entries && patient.entries.length > 0 ? (
         <List>
           {patient.entries.map(entry => (
             <EntryDetails key={entry.id} entry={entry} />
@@ -105,7 +105,11 @@ const PatientDetails = () => {
       <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Add a New Entry</DialogTitle>
         <DialogContent>
-          <AddEntryForm patientId={id!} onEntryAdded={handleEntryAdded} />
+          <AddEntryForm
+            patientId={id!}
+            onEntryAdded={handleEntryAdded}
+            onCancel={() => setDialogOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </Container>

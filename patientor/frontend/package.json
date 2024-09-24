@@ -15,9 +15,13 @@
     "@mui/icons-material": "^5.14.12",
     "@mui/material": "^5.14.12",
     "axios": "^1.5.1",
+    "date-fns": "^4.1.0",
+    "formik": "^2.4.6",
     "react": "^18.2.0",
+    "react-datepicker": "^7.4.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

@@ -51,7 +51,7 @@ export interface HealthCheckEntry extends BaseEntry {
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
   type: EntryType.OccupationalHealthcare;
-  employerName: string;
+  employerName?: string;
   sickLeave?: SickLeave;
 }
 
@@ -72,7 +72,7 @@ export interface Patient {
   ssn: string;
   gender: Gender;
   occupation: string;
-  entries: Entry[];
+  entries?: Entry[];
 }
 
 export type NewPatientSchema = z.infer<typeof NewPatientSchema>;

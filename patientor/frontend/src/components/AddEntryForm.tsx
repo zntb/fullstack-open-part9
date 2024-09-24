@@ -1,175 +1,211 @@
 import { useState } from 'react';
-import { Button, TextField, MenuItem, Alert, Box } from '@mui/material';
+import { Box, Button, Alert, Grid } from '@mui/material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import axios from 'axios';
 import { Entry } from '../types';
 import { apiBaseUrl } from '../constants';
+import DatePickerField from './AddEntryFields/DatePickerField';
+import TextFieldWithError from './AddEntryFields/TextFieldWithError';
+import HealthCheckFields from './AddEntryFields/HealthCheckFields';
+import HospitalFields from './AddEntryFields/HospitalFields';
+import OccupationalHealthcareFields from './AddEntryFields/OccupationalHealthcareFields';
+import SelectField from './AddEntryFields/SelectField';
+import { format } from 'date-fns';
 
 interface AddEntryFormProps {
   patientId: string;
   onEntryAdded: (entry: Entry) => void;
+  onCancel: () => void;
 }
 
-const AddEntryForm = ({ patientId, onEntryAdded }: AddEntryFormProps) => {
-  const [type, setType] = useState('HealthCheck');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [specialist, setSpecialist] = useState('');
-  const [healthCheckRating, setHealthCheckRating] = useState<number | string>(
-    0,
-  );
-  const [employerName, setEmployerName] = useState('');
-  const [dischargeDate, setDischargeDate] = useState('');
-  const [dischargeCriteria, setDischargeCriteria] = useState('');
+const typeOptions = [
+  { value: 'HealthCheck', label: 'Health Check' },
+  { value: 'Hospital', label: 'Hospital' },
+  { value: 'OccupationalHealthcare', label: 'Occupational Healthcare' },
+];
+
+const AddEntryForm = ({
+  patientId,
+  onEntryAdded,
+  onCancel,
+}: AddEntryFormProps) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      type: 'HealthCheck',
+      description: '',
+      date: new Date(),
+      specialist: '',
+      healthCheckRating: 0,
+      dischargeDate: new Date(),
+      dischargeCriteria: '',
+      employerName: '',
+      sickLeave: { startDate: new Date(), endDate: new Date() },
+    },
+    validationSchema: Yup.object({
+      description: Yup.string().required('Description is required'),
+      date: Yup.date().required('Date is required'),
+      specialist: Yup.string().required('Specialist is required'),
+    }),
+    onSubmit: async values => {
+      try {
+        const formattedDate = format(values.date, 'yyyy-MM-dd');
+        const formattedDischargeDate = format(
+          values.dischargeDate,
+          'yyyy-MM-dd',
+        );
+        const formattedSickLeaveStart = format(
+          values.sickLeave.startDate,
+          'yyyy-MM-dd',
+        );
+        const formattedSickLeaveEnd = format(
+          values.sickLeave.endDate,
+          'yyyy-MM-dd',
+        );
 
-    let newEntry;
+        const newEntry = {
+          type: values.type,
+          description: values.description,
+          date: formattedDate,
+          specialist: values.specialist,
+          healthCheckRating:
+            values.type === 'HealthCheck'
+              ? values.healthCheckRating
+              : undefined,
+          discharge:
+            values.type === 'Hospital'
+              ? {
+                  date: formattedDischargeDate,
+                  criteria: values.dischargeCriteria,
+                }
+              : undefined,
+          employerName:
+            values.type === 'OccupationalHealthcare'
+              ? values.employerName
+              : undefined,
+          sickLeave:
+            values.type === 'OccupationalHealthcare'
+              ? {
+                  startDate: formattedSickLeaveStart,
+                  endDate: formattedSickLeaveEnd,
+                }
+              : undefined,
+        };
 
-    switch (type) {
+        const { data: addedEntry } = await axios.post<Entry>(
+          `${apiBaseUrl}/patients/${patientId}/entries`,
+          newEntry,
+        );
+        onEntryAdded(addedEntry);
+        setSuccessMessage('Entry added successfully');
+        setErrorMessage(null);
+      } catch (error) {
+        setErrorMessage('Failed to add entry');
+        setSuccessMessage(null);
+      }
+    },
+  });
+
+  const renderFieldsForType = () => {
+    switch (formik.values.type) {
       case 'HealthCheck':
-        newEntry = {
-          type,
-          description,
-          date,
-          specialist,
-          healthCheckRating: Number(healthCheckRating),
-        };
-        break;
+        return (
+          <HealthCheckFields
+            healthCheckRating={formik.values.healthCheckRating}
+            onHealthCheckRatingChange={formik.handleChange}
+          />
+        );
       case 'Hospital':
-        newEntry = {
-          type,
-          description,
-          date,
-          specialist,
-          discharge: {
-            date: dischargeDate,
-            criteria: dischargeCriteria,
-          },
-        };
-        break;
+        return (
+          <HospitalFields
+            dischargeDate={formik.values.dischargeDate}
+            dischargeCriteria={formik.values.dischargeCriteria}
+            onDischargeDateChange={date =>
+              formik.setFieldValue('dischargeDate', date)
+            }
+            onDischargeCriteriaChange={formik.handleChange}
+          />
+        );
       case 'OccupationalHealthcare':
-        newEntry = {
-          type,
-          description,
-          date,
-          specialist,
-          employerName,
-        };
-        break;
+        return (
+          <OccupationalHealthcareFields
+            employerName={formik.values.employerName}
+            sickLeave={formik.values.sickLeave}
+            onEmployerNameChange={formik.handleChange}
+            onSickLeaveDateChange={(key, date) =>
+              formik.setFieldValue(`sickLeave.${key}`, date)
+            }
+          />
+        );
       default:
-        return;
-    }
-
-    try {
-      const { data: addedEntry } = await axios.post<Entry>(
-        `${apiBaseUrl}/patients/${patientId}/entries`,
-        newEntry,
-      );
-      onEntryAdded(addedEntry);
-      setSuccessMessage('Entry added successfully!');
-      setErrorMessage(null);
-    } catch (error) {
-      setErrorMessage('Failed to add entry. Please check your input.');
-      setSuccessMessage(null);
+        return null;
     }
   };
 
   return (
-    <Box component='form' onSubmit={handleSubmit} sx={{ mt: 2 }}>
+    <Box component='form' onSubmit={formik.handleSubmit} noValidate>
       {successMessage && <Alert severity='success'>{successMessage}</Alert>}
       {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-      <TextField
-        fullWidth
+
+      <TextFieldWithError
         label='Description'
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-        margin='normal'
+        name='description'
+        value={formik.values.description}
+        onChange={formik.handleChange}
+        error={formik.errors.description}
       />
-      <TextField
-        fullWidth
+
+      <DatePickerField
         label='Date'
-        type='date'
-        InputLabelProps={{ shrink: true }}
-        value={date}
-        onChange={e => setDate(e.target.value)}
-        margin='normal'
+        selectedDate={formik.values.date}
+        onChange={date => formik.setFieldValue('date', date)}
       />
-      <TextField
-        fullWidth
+
+      <TextFieldWithError
         label='Specialist'
-        value={specialist}
-        onChange={e => setSpecialist(e.target.value)}
-        margin='normal'
+        name='specialist'
+        value={formik.values.specialist}
+        onChange={formik.handleChange}
+        error={formik.errors.specialist}
       />
-      <TextField
-        select
+
+      <SelectField
         label='Type'
-        fullWidth
-        value={type}
-        onChange={e => setType(e.target.value)}
-        margin='normal'
-      >
-        <MenuItem value='HealthCheck'>Health Check</MenuItem>
-        <MenuItem value='Hospital'>Hospital</MenuItem>
-        <MenuItem value='OccupationalHealthcare'>
-          Occupational Healthcare
-        </MenuItem>
-      </TextField>
+        name='type'
+        value={formik.values.type}
+        onChange={formik.handleChange}
+        options={typeOptions}
+      />
 
-      {type === 'HealthCheck' && (
-        <TextField
-          fullWidth
-          label='Health Check Rating'
-          value={healthCheckRating}
-          onChange={e => setHealthCheckRating(e.target.value)}
-          type='number'
-          margin='normal'
-        />
-      )}
+      {renderFieldsForType()}
 
-      {type === 'Hospital' && (
-        <>
-          <TextField
-            fullWidth
-            label='Discharge Date'
-            type='date'
-            InputLabelProps={{ shrink: true }}
-            value={dischargeDate}
-            onChange={e => setDischargeDate(e.target.value)}
-            margin='normal'
-          />
-          <TextField
-            fullWidth
-            label='Discharge Criteria'
-            value={dischargeCriteria}
-            onChange={e => setDischargeCriteria(e.target.value)}
-            margin='normal'
-          />
-        </>
-      )}
-
-      {type === 'OccupationalHealthcare' && (
-        <TextField
-          fullWidth
-          label='Employer Name'
-          value={employerName}
-          onChange={e => setEmployerName(e.target.value)}
-          margin='normal'
-        />
-      )}
-
-      <Button
-        type='submit'
-        variant='contained'
-        color='primary'
-        fullWidth
-        sx={{ mt: 2 }}
-      >
-        Add Entry
-      </Button>
+      <Grid sx={{ mt: 2 }}>
+        <Grid item>
+          <Button
+            color='secondary'
+            variant='contained'
+            style={{ float: 'left' }}
+            type='button'
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            style={{
+              float: 'right',
+            }}
+            type='submit'
+            variant='contained'
+          >
+            Add
+          </Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
