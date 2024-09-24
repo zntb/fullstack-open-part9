@@ -10,13 +10,15 @@ import {
 } from '@mui/material';
 import { Male, Female, Transgender } from '@mui/icons-material';
 import axios from 'axios';
-import { Patient, Diagnosis } from '../types';
+import { Patient, Diagnosis, Entry } from '../types';
 import { apiBaseUrl } from '../constants';
 import EntryDetails from './EntryDetails';
+import AddEntryForm from './AddEntryForm';
 
 const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [showForm, setShowForm] = useState(false);
   const [, setDiagnoses] = useState<Diagnosis[] | null>(null);
 
   useEffect(() => {
@@ -63,6 +65,14 @@ const PatientDetails = () => {
     }
   };
 
+  const handleAddEntry = (newEntry: Entry) => {
+    setPatient(prevPatient =>
+      prevPatient
+        ? { ...prevPatient, entries: [...prevPatient.entries, newEntry] }
+        : null,
+    );
+  };
+
   return (
     <Container>
       <Box display='flex' alignItems='center' marginTop={2}>
@@ -92,9 +102,18 @@ const PatientDetails = () => {
         <Typography>No entries available.</Typography>
       )}
 
-      <Button variant='contained' color='primary' style={{ marginTop: '16px' }}>
-        ADD NEW ENTRY
+      <Button
+        variant='contained'
+        color='primary'
+        style={{ marginTop: '16px' }}
+        onClick={() => setShowForm(!showForm)}
+      >
+        {showForm ? 'Cancel' : 'Add New Entry'}
       </Button>
+
+      {showForm && (
+        <AddEntryForm patientId={id as string} onAddEntry={handleAddEntry} />
+      )}
     </Container>
   );
 };
